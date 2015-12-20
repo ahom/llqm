@@ -9,6 +9,8 @@ export default class SqlFrontend extends Pipeline {
     }
 
     pipeline() {
-        return parser_pass + super.pipeline() + gencode_pass;
+        return [parser_pass].concat(super.pipeline(), [gencode_pass]);
     }
 }
+
+export { default as mode } from "./src/mode.js";

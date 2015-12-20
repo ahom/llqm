@@ -8,6 +8,6 @@ export default class MongoBackend extends Pipeline {
     }
 
     pipeline() {
-        return super.pipeline() + gencode_pass;
+        return super.pipeline().concat([gencode_pass]);
     }
 }

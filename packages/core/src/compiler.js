@@ -19,7 +19,7 @@ export default class Compiler extends Pipeline {
     }
 
     pipeline() {
-        return this.fe.pipeline() + super.pipeline() + this.be.pipeline();
+        return this.fe.pipeline().concat(super.pipeline(), this.be.pipeline());
     }
 
     compile(input) {

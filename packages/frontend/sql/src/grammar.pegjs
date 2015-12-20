@@ -139,7 +139,7 @@ hexdigit = [0-9a-f]i
 
 // number
 float
-    = ('-'/'+')? [1-9] digit* ('.' digit+)? {
+    = ('-'/'+')? digit+ ('.' digit+)? {
         return parseFloat(text());
     }
 
