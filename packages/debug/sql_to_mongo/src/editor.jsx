@@ -1,7 +1,11 @@
 import React from 'react';
-import Codemirror from 'react-codemirror';
+import CodeEditor from 'react-codemirror';
+
+import CodeMirror from 'codemirror';
+import 'codemirror/addon/mode/simple'; 
 
 import { mode } from 'llqm-frontend-sql';
+CodeMirror.defineSimpleMode("llqm-frontend-sql", mode);
 
 export default class Editor extends React.Component {
     constructor(props) {
@@ -9,7 +13,6 @@ export default class Editor extends React.Component {
         this.state = {
             code: "SELECT cpn.id, cpn.from\nFROM docs\nUNNEST coupons AS cpn"
         };
-        // TODO: Codemirror.defineSimpleMode("llqm-frontend-sql", mode);
     }
     updateCode(code) {
         this.setState({
@@ -22,6 +25,6 @@ export default class Editor extends React.Component {
             theme: "base16-dark",
             lineNumbers: true
         };
-        return <Codemirror value={this.state.code} options={options} />
+        return <CodeEditor value={this.state.code} options={options} />
     }
 }
