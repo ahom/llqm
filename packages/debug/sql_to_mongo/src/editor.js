@@ -1,5 +1,6 @@
 import React from 'react';
 import CodeEditor from 'react-codemirror';
+import { Alert } from 'react-bootstrap';
 
 import CodeMirror from 'codemirror';
 import 'codemirror/addon/mode/simple'; 
@@ -25,6 +26,14 @@ export default class Editor extends React.Component {
             theme: "base16-dark",
             lineNumbers: true
         };
-        return <CodeEditor value={this.state.code} options={options} />
+        return (
+            <div>
+                <CodeEditor value={this.state.code} options={options} />
+                <br />
+                <Alert bsStyle="danger">
+                    <strong>Oh noes an error !</strong>
+                </Alert>
+            </div>
+        );
     }
 }
