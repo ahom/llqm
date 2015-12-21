@@ -19,6 +19,7 @@ export default class Editor extends React.Component {
         this.setState({
             code: code
         });
+        this.props.onChange();
     }
     render() {
         let options = {
@@ -26,14 +27,6 @@ export default class Editor extends React.Component {
             theme: "base16-dark",
             lineNumbers: true
         };
-        return (
-            <div>
-                <CodeEditor value={this.state.code} options={options} />
-                <br />
-                <Alert bsStyle="danger">
-                    <strong>Oh noes an error !</strong>
-                </Alert>
-            </div>
-        );
+        return <CodeEditor value={this.state.code} onChange={this.updateCode.bind(this)} options={options} />;
     }
 }
