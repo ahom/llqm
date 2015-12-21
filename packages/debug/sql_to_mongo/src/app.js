@@ -39,12 +39,15 @@ export default class App extends React.Component {
         try {
             for (let pass of this.compiler.pipeline()) {
                 let current_pass = {
+                    state: 'danger',
                     name: pass.name,
-                    desc: pass.desc
+                    desc: pass.desc,
+                    output: {}
                 };
                 passes.push(current_pass);
                 output = pass.apply(output);
-                current_pass.output = JSON.stringify(output, null, 4);
+                current_pass.output = JSON.parse(JSON.stringify(output));
+                current_pass.state = 'success';
             }
             this.setState({
                 result: {
@@ -56,7 +59,7 @@ export default class App extends React.Component {
             this.setState({
                 result: {
                     type: 'danger',
-                    message: err.message
+                    message: (<span><strong>{err.name}: </strong>{err.message}</span>)
                 }
             });
         }
@@ -77,9 +80,7 @@ export default class App extends React.Component {
                     <Col xs={12} md={6}>
                         <Editor onChange={this.onEditorChange.bind(this)} ref={(ref) => this.editor = ref}/>
                         <br />
-                        <Alert bsStyle={this.state.result.type}>
-                            <strong>{this.state.result.message}</strong>
-                        </Alert>
+                        <Alert bsStyle={this.state.result.type}>{this.state.result.message}</Alert>
                     </Col>
                     <Col xs={12} md={6}><CompileLog passes={this.state.passes}/></Col>
                 </Row>

@@ -25,6 +25,7 @@
     "react-bootstrap": "^0.28.1",
     "react-codemirror": "^0.2.2",
     "react-dom": "^0.14.3",
+    "react-json-inspector": "^5.4.0",
     "webpack": "^1.12.9"
   }
 }
