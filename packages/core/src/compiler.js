@@ -24,7 +24,22 @@ export default class Compiler extends Pipeline {
 
     compile(input) {
         let output = input;
-        this.pipeline().forEach((pass) => output = pass.apply(output));
+        for (let pass of this.pipeline()) {
+            output = pass.apply(output);
+        }
+        return output;
+    }
+
+    debug_compile(input) {
+        let output = [];
+        for (let pass of this.pipeline()) {
+            let result = pass.debug_apply(input);
+            output.push(result);
+            if (!result.success) {
+                break;
+            }
+            input = result.output;
+        }
         return output;
     }
 }

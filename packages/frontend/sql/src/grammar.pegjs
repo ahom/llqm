@@ -1,6 +1,6 @@
 {
-    function ast(typename, props, children_props) {
-    	props.typename = typename;
+    function ast(nodename, props, children_props) {
+        props.nodename = nodename;
         props.loc = location();
         props.children = [];
         for (var prop in children_props) {
@@ -10,29 +10,78 @@
         return props;
     }
     
-    function ast_leaf(typename, value) {
-        return ast(typename, { value: value }, {});
+    function ast_leaf(nodename, value) {
+        return ast(nodename, { value: value }, {});
     }
 }
 
-// TODO: query
-query
-    = _ expr _
+// TEST: start
+start = expr
 
-// TODO: expr
+// query
+query
+    = _ query:(select_from_clause/from_select_clause) _ {
+        return ast("query", {}, query);
+    }
+
+select_from_clause
+    = select:select_clause
+    __ from:from_clause {
+        return {
+            select: select,
+            from: from
+        };
+    }
+
+from_select_clause
+    = from:from_clause
+    __ select:select_clause {
+        return {
+            select: select,
+            from: from
+        };
+    }
+
+// select
+select_clause
+    = "SELECT"i __ select:(select_object/expr) {
+        return select;
+    }
+
+select_object
+    = "{" _ head:select_member tail:(_ "," _ select_member)* _ "}" {
+        return ast("select_object", {}, { members: [head].concat(tail) });
+    }
+
+select_value
+    = select_object
+    / expr
+
+select_member
+    = name:identifier _ ":" _ value:select_value {
+        return ast("select_member", {}, { name:name, value:value });
+    }
+
+// from
+from_clause
+    = "FROM"i __ value:(identifier/query) {
+        return value;
+    }
+
+// expr
 expr
     = add_expr
     / base_expr
 
 add_expr
-    = lhe:mul_expr tail:(_ op:('+'/'-') _ expr:mul_expr { return { op: op, expr: expr }; })* {
+    = head:mul_expr tail:(_ op:('+'/'-') _ expr:mul_expr { return { op: op, expr: expr }; })* {
         if (tail.length === 0) {
-            return lhe;
+            return head;
         }
-        let rv = lhe;
+        let rv = head;
         tail.forEach((item) => {
             if (item.op !== rv.op) {
-                rv = ast("expr:nary", { op: item.op }, { exprs: [rv] });
+                rv = ast("expr_nary", { op: item.op }, { exprs: [rv] });
             } 
             rv.exprs.push(item.expr);
         });
@@ -40,20 +89,19 @@ add_expr
     }
 
 mul_expr
-    = lhe:base_expr tail:(_ op:('*'/'/') _ expr:base_expr { return { op: op, expr: expr }; })* {
+    = head:base_expr tail:(_ op:('*'/'/') _ expr:base_expr { return { op: op, expr: expr }; })* {
         if (tail.length === 0) {
-            return lhe;
+            return head;
         }
-        let rv = lhe;
+        let rv = head;
         tail.forEach((item) => {
             if (item.op !== rv.op) {
-                rv = ast("expr:nary", { op: item.op }, { exprs: [rv] });
+                rv = ast("expr_nary", { op: item.op }, { exprs: [rv] });
             } 
             rv.exprs.push(item.expr);
         });
         return rv;
     }
-
 
 base_expr
     = value_expr
@@ -64,12 +112,12 @@ base_expr
 
 path_expr
     = path:path {
-        return ast("expr:path", {}, { path: path });
+        return ast("expr_path", {}, { path: path });
     }
 
 value_expr
     = value:value {
-        return ast_leaf("expr:value", value);
+        return ast_leaf("expr_value", value);
     }
 
 // path
@@ -80,17 +128,17 @@ path
 
 path_comp
     = ident:identifier path_slices:(path_slice)* {
-        return ast("path:comp", { ident: ident }, { slices: path_slices });
+        return ast("path_comp", { ident: ident }, { slices: path_slices });
     }
 
 path_slice
     = '[' _ lbound:expr size:(_ ':' _ size:expr { return size; }) _ ']' {
-        return ast("path:slice", {}, { lbound: lbound, size: size });
+        return ast("path_slice", {}, { lbound: lbound, size: size });
     }
 
 identifier
     = [a-zA-Z_]+ {
-        return text();
+        return ast_leaf("identifier", text());
     }
 
 // value
@@ -103,7 +151,7 @@ value
 // bool
 bool
     = ('true'i/'false'i) {
-        return text().toLowerCase === 'true';
+        return text().toLowerCase() === 'true';
     }
 
 // string
