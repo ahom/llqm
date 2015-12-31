@@ -1,29 +1,24 @@
 var path = require('path')
 
 module.exports = {
-    entry: "./index.js",
+    entry: "./index",
     output: {
-        path: path.join(__dirname, "lib"),
+        path: path.join(__dirname, "dist"),
         filename: "llqm-backend-mongo.js",
         library: "llqm-backend-mongo",
         libraryTarget: "umd"
     },
+    externals: [ "llqm-core" ],
     devtool: "source-map",
-    externals: {
-        "llqm-core": true
-    },
     module: {
         loaders: [
             {
-                include: [
-                    __dirname,
-                    path.join(__dirname, "src")
-                ],
-                loader: "babel",
-                query: {
-                    presets: ['es2015']
-                }
+                test: /\.ts$/,
+                loader: "ts-loader",
             }
         ]
+    },
+    resolve: {
+        extensions: ['', '.webpack.js', '.web.js', '.js', '.ts']
     }
 }

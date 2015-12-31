@@ -1,28 +1,23 @@
 var path = require('path')
 
 module.exports = {
-    entry: "./index.js",
+    entry: "./src/boot",
     output: {
-        path: path.join(__dirname, "lib"),
+        path: path.join(__dirname, "dist"),
         filename: "llqm-debug-sql_to_mongo.js",
-        library: ["llqm", "debug", "sql_to_mongo"],
+        library: "llqm-debug-sql_to_mongo",
         libraryTarget: "umd"
     },
     devtool: "source-map",
     module: {
         loaders: [
             {
-                loader: "babel",
-                exclude: [
-                    path.join(__dirname, 'node_modules')
-                ],
-                query: {
-                    presets: [
-                        './node_modules/babel-preset-react', 
-                        './node_modules/babel-preset-es2015'
-                    ]
-                }
+                test: /\.tsx?$/,
+                loader: "ts-loader",
             }
         ]
+    },
+    resolve: {
+        extensions: ['', '.webpack.js', '.web.js', '.js', '.ts', '.tsx']
     }
 }

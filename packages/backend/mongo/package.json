@@ -1,19 +1,17 @@
 {
   "name": "llqm-backend-mongo",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "link": "rm -fr ./node_modules/llqm-core && ln -s ../../../core ./node_modules/llqm-core",
+    "build": "webpack",
+    "build:w": "webpack -w"
   },
   "author": "Antoine Hom",
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^6.3.17",
-    "babel-loader": "^6.2.0",
-    "babel-preset-es2015": "^6.3.13",
     "llqm-core": "file:../../core",
+    "ts-loader": "^0.7.2",
+    "typescript": "^1.7.5",
     "webpack": "^1.12.9"
   }
 }
