@@ -1,11 +1,11 @@
 import {Pass} from "llqm-core";
-import {INode} from "llqm-core/ir";
+import {Node} from "llqm-core/ir";
 
-class GencodePass extends Pass<INode, any> {
+class GencodePass extends Pass<Node, any> {
     constructor() {
         super('backend::mongo::gencode_pass');
     }
-    transform(input : INode) : any {
+    transform(input : Node) : any {
         throw new Error("TODO"); // TODO
     }
 }

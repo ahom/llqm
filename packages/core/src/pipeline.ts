@@ -24,15 +24,17 @@ export default class Pipeline<IN, MID, OUT> extends Pass<IN, OUT> {
             output: null
         };
         let output = input;
+        let sub_result : IDebugResult = null;
         for (let pass of <Array<Pass<IN|MID, MID|OUT>>>[this.frontend, ...this.transforms, this.backend]) {
-            let sub_result = pass.debug_transform(output);
+            sub_result = pass.debug_transform(output);
             result.sub_results.push(sub_result);
-            result.output = sub_result.output;
-            result.success = sub_result.success;
-            if (!result.success) {
+            output = sub_result.output;
+            if (!sub_result.success) {
                 break;
             }
         }
+        result.output = sub_result.output;
+        result.success = sub_result.success;
         return result;
     }
 

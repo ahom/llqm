@@ -1,5 +1,5 @@
 import Pipeline from './pipeline';
-import {INode} from './ir/node';
+import {Node} from './ir/node';
 
-export default class Compiler<IN, OUT> extends Pipeline<IN, INode, OUT> {
+export default class Compiler<IN, OUT> extends Pipeline<IN, Node, OUT> {
 }

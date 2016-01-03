@@ -21,9 +21,15 @@ export default class App extends React.Component<Props, State> {
         this._compiler = new Compiler('compiler::sql_to_mongo', new SqlFrontend(), new MongoBackend());
     }
     compile(input : string) {
+        let compile_result = this._compiler.debug_transform(input); 
         this.setState({
-            compile_result : this._compiler.debug_transform(input)
+            compile_result: compile_result 
         });
+        if (compile_result.success) {
+            console.info(compile_result.output);
+        } else {
+            console.warn(compile_result.output);
+        }
     }
     render() {
         return (

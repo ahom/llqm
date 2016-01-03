@@ -10,6 +10,6 @@
     "noImplicitAny": true
   },
   "files": [
-      "index.ts"
+      "./typings/tsd.d.ts"
   ]
 }
