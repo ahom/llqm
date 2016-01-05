@@ -1,23 +1,12 @@
 var path = require('path')
 
 module.exports = {
-    entry: ["./index", "./ir", "./schema"],
+    entry: "./index",
     output: {
         path: path.join(__dirname, "dist"),
-        filename: "llqm-core.js",
+        filename: "bundle.js",
         library: "llqm-core",
-        libraryTarget: "umd"
+        libraryTarget: "commonjs"
     },
-    devtool: "source-map",
-    module: {
-        loaders: [
-            {
-                test: /\.ts$/,
-                loader: "ts-loader",
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.js', '.ts']
-    }
+    devtool: "source-map"
 }

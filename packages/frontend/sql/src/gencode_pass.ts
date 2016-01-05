@@ -1,13 +1,12 @@
-import {Pipeline, Pass} from 'llqm-core';
-import {Node as IRNode} from 'llqm-core/ir';
+import {Pipeline, Pass, ir} from 'llqm-core';
 
 import {INode as ASTINode} from './ast';
 
-class GencodePass extends Pass<ASTINode, IRNode> {
+class GencodePass extends Pass<ASTINode, ir.Node> {
     constructor() {
         super('frontend::sql::gencode_pass');
     }
-    transform(input : ASTINode) : IRNode {
+    transform(input : ASTINode) : ir.Node {
         throw new Error("TODO"); // TODO
     }
 }

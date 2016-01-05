@@ -1,3 +1,7 @@
 **/*.js.map
+**/src/*.js
+**/src/**/*.js
 **/dist
 **/typings
+npm-debug.log
+**/index.js

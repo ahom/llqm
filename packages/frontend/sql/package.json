@@ -2,23 +2,24 @@
   "name": "llqm-frontend-sql",
   "version": "0.0.0",
   "scripts": {
+    "tsd": "tsd",
+    "tsc": "tsc",
+    "bootstrap": "npm install && tsd install && npm run link",
     "test": "karma start",
     "link": "rm -fr ./node_modules/llqm-core && ln -s ../../../core ./node_modules/llqm-core",
-    "build": "npm run pegjs && webpack --color --progress --entry ./index.ts",
-    "build:w": "npm run build -- -w",
-    "pegjs": "pegjs ./src/grammar.pegjs"
+    "build": "tsc && webpack --color --progress",
+    "build:w": "npm run build && concurrent \"tsc --watch\" \"webpack --color --watch\""
   },
   "author": "Antoine Hom",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^1.0.0",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.16",
     "karma-chrome-launcher": "^0.2.2",
     "karma-jasmine": "^0.3.6",
     "karma-webpack": "^1.7.0",
     "llqm-core": "file:../../core",
-    "pegjs": "^0.9.0",
-    "ts-loader": "^0.7.2",
     "tsd": "^0.6.5",
     "typescript": "^1.7.5",
     "webpack": "^1.12.9"

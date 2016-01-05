@@ -10,8 +10,7 @@
     "noImplicitAny": true
   },
   "files": [
-      "index.ts",
-      "ir.ts",
-      "schema.ts"
+    "index.ts",
+      "./typings/tsd.d.ts"
   ]
 }

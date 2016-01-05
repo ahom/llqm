@@ -1,5 +1,4 @@
-import {Pipeline, Pass} from 'llqm-core';
-import {Node as IRNode} from 'llqm-core/ir';
+import {Pipeline, Pass, ir} from 'llqm-core';
 
 import {INode as IASTNode} from './ast';
 import {IToken} from './lexer';
@@ -14,7 +13,7 @@ export class ParserPipeline extends Pipeline<string, Array<IToken>, IASTNode> {
     }
 }
 
-export default class SqlPipeline extends Pipeline<string, IASTNode, IRNode> {
+export default class SqlPipeline extends Pipeline<string, IASTNode, ir.Node> {
     constructor(
             parser_pipeline: ParserPipeline = new ParserPipeline([remove_tokens_pass]), 
             transforms : Array<Pass<IASTNode, IASTNode>> = []) {

@@ -4,21 +4,10 @@ module.exports = {
     entry: "./index",
     output: {
         path: path.join(__dirname, "dist"),
-        filename: "llqm-backend-mongo.js",
+        filename: "bundle.js",
         library: "llqm-backend-mongo",
-        libraryTarget: "umd"
+        libraryTarget: "commonjs"
     },
-    externals: [ "llqm-core" ],
     devtool: "source-map",
-    module: {
-        loaders: [
-            {
-                test: /\.ts$/,
-                loader: "ts-loader",
-            }
-        ]
-    },
-    resolve: {
-        extensions: ['', '.webpack.js', '.web.js', '.js', '.ts']
-    }
+    externals: ["llqm-core"]
 }

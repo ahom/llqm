@@ -2,15 +2,19 @@
   "name": "llqm-backend-mongo",
   "version": "0.0.0",
   "scripts": {
+    "tsd": "tsd",
+    "tsc": "tsc",
     "link": "rm -fr ./node_modules/llqm-core && ln -s ../../../core ./node_modules/llqm-core",
-    "build": "webpack",
-    "build:w": "webpack -w"
+    "bootstrap": "npm install && tsd install && npm run link",
+    "build": "tsc && webpack --color --progress",
+    "build:w": "concurrent \"tsc --watch\" \"webpack --color --watch\""
   },
   "author": "Antoine Hom",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^1.0.0",
     "llqm-core": "file:../../core",
-    "ts-loader": "^0.7.2",
+    "tsd": "^0.6.5",
     "typescript": "^1.7.5",
     "webpack": "^1.12.9"
   }
