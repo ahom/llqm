@@ -1,5 +1,6 @@
 {
   "name": "llqm-backend-mongo",
+  "main": "dist/bundle.js",
   "version": "0.0.0",
   "scripts": {
     "tsd": "tsd",
