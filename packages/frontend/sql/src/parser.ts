@@ -24,12 +24,12 @@ export class EndOfInputError extends Error {
     }
 }
 
-interface INode {
+export interface INode {
     rloc: ILocationRange,
     value: any
 }
 
-abstract class Rule {
+export abstract class Rule {
     constructor(public name?: string) {}
     abstract entry_tags(): Array<string>;
     abstract parse(tokens: Array<IToken>): INode;

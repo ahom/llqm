@@ -9,8 +9,8 @@ import Editor from './editor';
 import CompileLog from './compile_log';
 import {debounce} from './utils';
 
-interface Props {}
-interface State {
+export interface Props {}
+export interface State {
     compile_result? : IDebugResult
 }
 

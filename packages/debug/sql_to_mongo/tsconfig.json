@@ -1,13 +1,17 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "module": "commonjs",
+    "module": "amd",
+    "outDir": "dist",
+    "outFile": "dist/bundle.js",
+    "inlineSources": true,
+    "inlineSourceMap": true,
     "moduleResolution": "node",
-    "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "removeComments": false,
+    "removeComments": true,
     "noImplicitAny": true,
+    "declaration": true,
     "jsx": "react"
   },
   "files": [

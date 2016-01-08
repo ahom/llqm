@@ -2,7 +2,7 @@ import {Pipeline, Pass, ir} from 'llqm-core';
 
 import {INode as ASTINode} from './ast';
 
-class GencodePass extends Pass<ASTINode, ir.Node> {
+export class GencodePass extends Pass<ASTINode, ir.Node> {
     constructor() {
         super('frontend::sql::gencode_pass');
     }

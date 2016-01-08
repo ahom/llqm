@@ -6,7 +6,7 @@ import * as ObjectInspector from 'react-object-inspector';
 
 import {IDebugResult} from 'llqm-core';
 
-interface Props {
+export interface Props {
     result? : IDebugResult,
     key? : string,
     open? : boolean

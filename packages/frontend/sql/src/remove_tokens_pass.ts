@@ -2,7 +2,7 @@ import {Pass} from 'llqm-core';
 
 import {IToken, RemovableTag} from './lexer';
 
-class RemoveTokensPass extends Pass<Array<IToken>, Array<IToken>> {
+export class RemoveTokensPass extends Pass<Array<IToken>, Array<IToken>> {
     constructor() {
         super('frontend::sql::remove_tokens_pass');
     }
