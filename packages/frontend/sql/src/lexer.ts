@@ -69,7 +69,7 @@ export class Lexer {
 
     next(ctx: IContext): IToken {
         let start_loc = ctx.loc;
-        for(let rule_id in this.rules) {
+        for(let rule_id = 0; rule_id < this.rules.length; rule_id++) {
             let token = this.parse_rule_id(ctx, rule_id);
             if (token !== null) {
                 return token;

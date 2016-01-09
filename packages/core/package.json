@@ -1,20 +1,18 @@
 {
   "name": "llqm-core",
-  "main": "dist/bundle.js",
+  "main": "lib/llqm-core.js",
   "version": "0.0.0",
   "scripts": {
     "tsd": "tsd",
     "tsc": "tsc",
     "bootstrap": "npm install && tsd install",
-    "build": "tsc && webpack --color --progress",
-    "build:w": "concurrent \"tsc --watch\" \"webpack --color --watch\""
+    "build": "tsc",
+    "build:w": "tsc --watch"
   },
   "author": "Antoine Hom",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^1.0.0",
     "tsd": "^0.6.5",
-    "typescript": "^1.7.5",
-    "webpack": "^1.12.9"
+    "typescript": "^1.8.0-dev.20160109"
   }
 }

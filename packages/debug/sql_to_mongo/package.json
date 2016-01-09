@@ -25,8 +25,9 @@
     "react-codemirror": "^0.2.3",
     "react-dom": "^0.14.5",
     "react-object-inspector": "^0.2.0",
+    "systemjs": "^0.19.13",
     "tsd": "^0.6.5",
-    "typescript": "last",
-    "webpack": "^1.12.9"
+    "typescript": "^1.8.0-dev.20160109",
+    "webpack": "^1.12.10"
   }
 }

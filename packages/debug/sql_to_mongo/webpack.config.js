@@ -1,12 +1,12 @@
 var path = require('path')
 
 module.exports = {
-    entry: "./src/boot",
+    entry: "./lib/src/boot",
     output: {
-        path: path.join(__dirname, "dist"),
+        path: path.join(__dirname, "lib"),
         filename: "bundle.js",
         library: "llqm-debug-sql_to_mongo",
-        libraryTarget: "commonjs"
+        libraryTarget: "umd"
     },
     devtool: "source-map"
 }
