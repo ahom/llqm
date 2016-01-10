@@ -8,6 +8,24 @@ export enum Type {
     object
 }
 
+export function get_type(val: any): Type {
+    if (typeof val === "number") {
+        if (val % 1 === 0) {
+            return Type.integer;
+        }
+        return Type.float;
+    } else if (typeof val === "string") {
+        return Type.string;
+    } else if (typeof val === "boolean") {
+        return Type.boolean;
+    } else if (val instanceof Date) {
+        return Type.date;
+    } else if (Array.isArray(val)) {
+        return Type.array;
+    }
+    return Type.object;
+}
+
 export interface INode {
     type : Type
 }

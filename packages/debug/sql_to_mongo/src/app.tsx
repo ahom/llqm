@@ -28,7 +28,7 @@ export default class App extends React.Component<Props, State> {
         if (compile_result.success) {
             console.info(compile_result.output);
         } else {
-            console.warn(compile_result.output);
+            console.trace(compile_result.output);
         }
     }
     render() {

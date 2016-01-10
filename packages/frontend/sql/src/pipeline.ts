@@ -1,22 +1,22 @@
 import {Pipeline, Pass, ir} from 'llqm-core';
 
-import {INode as IASTNode} from './ast';
+import {INode} from './parser';
 import {IToken} from './lexer';
-import lexer_pass from './lexer_pass';
-import remove_tokens_pass from './remove_tokens_pass';
-import parser_pass from './parser_pass';
-import gencode_pass from './gencode_pass';
+import LexerPass from './lexer_pass';
+import RemoveTokensPass from './remove_tokens_pass';
+import ParserPass from './parser_pass';
+import GencodePass from './gencode_pass';
 
-export class ParserPipeline extends Pipeline<string, Array<IToken>, IASTNode> {
+export class ParserPipeline extends Pipeline<string, Array<IToken>, INode> {
     constructor(transforms: Array<Pass<Array<IToken>, Array<IToken>>> = []) {
-        super('frontend::sql::parser_pipeline', lexer_pass, parser_pass, transforms);
+        super('frontend::sql::parser_pipeline', new LexerPass(), new ParserPass(), transforms);
     }
 }
 
-export default class SqlPipeline extends Pipeline<string, IASTNode, ir.Node> {
+export default class SqlPipeline extends Pipeline<string, INode, ir.Node> {
     constructor(
-            parser_pipeline: ParserPipeline = new ParserPipeline([remove_tokens_pass]), 
-            transforms : Array<Pass<IASTNode, IASTNode>> = []) {
-        super('frontend::sql', parser_pipeline, gencode_pass, transforms);
+            parser_pipeline: ParserPipeline = new ParserPipeline([new RemoveTokensPass()]), 
+            transforms : Array<Pass<INode, INode>> = []) {
+        super('frontend::sql', parser_pipeline, new GencodePass(), transforms);
     }
 }

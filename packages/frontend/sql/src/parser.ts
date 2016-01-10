@@ -25,19 +25,20 @@ export class EndOfInputError extends Error {
 }
 
 export interface INode {
+    typename: string,
     rloc: ILocationRange,
     value: any
 }
 
 export abstract class Rule {
-    constructor(public name?: string) {}
+    constructor() {}
     abstract entry_tags(): Array<string>;
     abstract parse(tokens: Array<IToken>): INode;
 }
 
 class TagRule extends Rule {
     constructor(protected _tag: string) {
-        super(null);
+        super();
     }
     entry_tags(): Array<string> {
         return [this._tag];
@@ -49,6 +50,7 @@ class TagRule extends Rule {
         let token = tokens.shift();
         if (token.tag === this._tag) {
             return {
+                typename: "tag",
                 rloc: token.rloc,
                 value: token.value
             };
@@ -58,8 +60,8 @@ class TagRule extends Rule {
 }
 
 class ListRule extends Rule {
-    constructor(protected _rules: Array<Rule>, protected _action: (node: INode) => INode, name?: string) {
-        super(name);
+    constructor(protected _rules: Array<Rule>, protected _action: (node: INode) => INode) {
+        super();
         if (this._rules.length === 0) {
             throw new Error('ListRule with empty list');
         }
@@ -70,6 +72,7 @@ class ListRule extends Rule {
     parse(tokens: Array<IToken>): INode {
         let nodes = this._rules.map((rule) => rule.parse(tokens)).filter((node) => node !== null); 
         return this._action({
+            typename: "list",
             rloc: {
                 start: nodes[0].rloc.start,
                 end: nodes[nodes.length - 1].rloc.end
@@ -81,8 +84,8 @@ class ListRule extends Rule {
 
 class ChoiceRule extends Rule {
     protected _rule_map: { [tag: string]: Rule };
-    constructor(protected _rules: Array<Rule>, name?: string) {
-        super(name);
+    constructor(protected _rules: Array<Rule>, protected _action: (node: INode) => INode) {
+        super();
         this._rule_map = {};
         for (let rule of this._rules) {
             this.push(rule);
@@ -107,7 +110,7 @@ class ChoiceRule extends Rule {
         let token = tokens[0];
         let matching_rule = this._rule_map[token.tag];
         if (matching_rule !== undefined) {
-            return matching_rule.parse(tokens);
+            return this._action(matching_rule.parse(tokens));
         }
         throw new SyntaxError(token.rloc, this.entry_tags(), token.value);
     }
@@ -115,8 +118,8 @@ class ChoiceRule extends Rule {
 
 class RepetitionRule extends Rule {
     protected _rule_tags: Array<string>;
-    constructor(protected _rule: Rule, name?: string) {
-        super(name);
+    constructor(protected _rule: Rule) {
+        super();
         this._rule_tags = this._rule.entry_tags();
     }
     entry_tags(): Array<string> {
@@ -127,6 +130,7 @@ class RepetitionRule extends Rule {
             return null;
         }
         let rv: INode = {
+            typename: "repetition",
             rloc: {
                 start: tokens[0].rloc.start,
                 end: tokens[0].rloc.start
@@ -135,6 +139,7 @@ class RepetitionRule extends Rule {
         };
         while (tokens.length > 0 && this._rule_tags.indexOf(tokens[0].tag) !== -1) {
             rv.value.push(this._rule.parse(tokens));
+            rv.rloc.end = rv.value[rv.value.length - 1].rloc.end;
         }
         return rv;
     }
@@ -158,47 +163,70 @@ function make_rule(rule: any): Rule {
 }
 
 const noop = (node: INode) => node;
-function nlist(name: string, rules: Array<any>, action: (node:INode) => INode = noop): ListRule {
-    return new ListRule(rules.map((rule) => make_rule(rule)), action, name);
-}
 function list(rules: Array<any>, action: (node:INode) => INode = noop): ListRule {
-    return nlist(null, rules, action);
+    return new ListRule(rules.map((rule) => make_rule(rule)), action);
 }
 
-function nchoice(name: string, rules: Array<any>): ChoiceRule {
-    return new ChoiceRule(rules.map((rule) => make_rule(rule)), name);
-}
-function choice(rules: Array<any>): ChoiceRule {
-    return nchoice(null, rules);
+function choice(rules: Array<any>, action: (node: INode) => INode = noop): ChoiceRule {
+    return new ChoiceRule(rules.map((rule) => make_rule(rule)), action);
 }
 
-function nrepeat(name: string, rule: any): RepetitionRule {
-    return new RepetitionRule(make_rule(rule), name);
-}
 function repeat(rule: any): RepetitionRule {
-    return nrepeat(null, rule);
+    return new RepetitionRule(make_rule(rule));
 }
 
-let value = nchoice("value", [
+let value = choice([
     val.bool,
     val.float,
     val.int,
     val.string
-]);
+], (node) => {
+    return {
+        typename: "value",
+        rloc: node.rloc,
+        value: node.value
+    }
+});
+
+let ident = choice([val.ident], (node) => {
+    return {
+        typename: "ident",
+        rloc: node.rloc,
+        value: node.value
+    };
+});
 
 let keyword = choice(Object.keys(kw).map((key) => (<any>kw)[key].tag));
 
-let path = nlist("path", [
-    val.ident,
+let path = list([
+    ident,
     repeat(
         choice([
-            list(['[', val.int, ']']),
-            list(['.', choice([keyword, val.ident])])
+            list(['[', value, ']'], (node) => {
+                return {
+                    typename: "array_index",
+                    rloc: node.rloc,
+                    value: node.value[1]
+                };
+            }),
+            list(['.', choice([keyword, ident])], (node) => {
+                return {
+                    typename: "ident",
+                    rloc: node.rloc,
+                    value: node.value[1].value
+                };
+            })
         ])
     )
-]);
+], (node) => {
+    return {
+        typename: "path",
+        rloc: node.rloc,
+        value: [node.value[0]].concat(node.value[1] ? node.value[1].value : [])
+    };
+});
 
-let base_expr = nchoice("expr", [
+let base_expr = choice([
     value,
     path
 ]);
@@ -211,7 +239,12 @@ let mult_expr = list([
             base_expr
         ])
     )
-]);
+], (node) => {
+    if (!node.value[1]) {
+        return node.value[0];
+    }
+    return node;
+});
 
 let add_expr = list([
     mult_expr,
@@ -221,19 +254,26 @@ let add_expr = list([
             mult_expr
         ])
     )
-]);
+], (node) => {
+    if (!node.value[1]) {
+        return node.value[0];
+    }
+    return node;
+});
 
 let expr = choice([
     add_expr
 ]);
 base_expr.push(
-    list(['(', expr, ')'])
+    list(['(', expr, ')'], (node) => {
+        return node.value[1];
+    })
 );
 
-let query = nlist("query", [
+let query = list([
     kw.select.tag,
     expr
 ]);
 
-let parser = new Parser(query);
+let parser = new Parser(expr);
 export default parser;

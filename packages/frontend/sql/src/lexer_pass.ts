@@ -2,7 +2,7 @@ import {Pass} from 'llqm-core';
 
 import lexer, {IToken} from './lexer';
 
-export class LexerPass extends Pass<string, Array<IToken>> {
+export default class LexerPass extends Pass<string, Array<IToken>> {
     constructor() {
         super('frontend::sql::lexer_pass');
     }
@@ -10,6 +10,3 @@ export class LexerPass extends Pass<string, Array<IToken>> {
         return lexer.lex(input);
     }
 }
-
-let pass = new LexerPass();
-export default pass;
